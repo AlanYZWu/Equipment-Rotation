@@ -174,22 +174,21 @@ for row in range(2, 12):
             while check_used(row, member, equipment_rotation_page):
                 member = random.choice(list(lion_set))
 
-        if "Lion" in member:
+        if "Lions" in member:
             for i in range(2, 23):
-                if "Lion" in availability_page.cell(row=i, column=1).value:
-                    bench_set.discard(member)
-                    drum_set.discard(member)
-                    box_set.discard(member)
-                    lion_set.discard(member)
+                if "Lions" in availability_page.cell(row=i, column=1).value:
+                    bench_set.discard(availability_page.cell(row=i, column=1).value)
+                    drum_set.discard(availability_page.cell(row=i, column=1).value)
+                    box_set.discard(availability_page.cell(row=i, column=1).value)
+                    lion_set.discard(availability_page.cell(row=i, column=1).value)
 
         if "Senior" in member:
             for i in range(2, 23):
                 if "Senior" in availability_page.cell(row=i, column=1).value:
-                    bench_set.discard(member)
-                    drum_set.discard(member)
-                    box_set.discard(member)
-                    lion_set.discard(member)
+                    bench_set.discard(availability_page.cell(row=i, column=1).value)
+                    drum_set.discard(availability_page.cell(row=i, column=1).value)
+                    box_set.discard(availability_page.cell(row=i, column=1).value)
+                    lion_set.discard(availability_page.cell(row=i, column=1).value)
         if member != "^":
             equipment_rotation_page.cell(row=row, column=col, value=member)
         equipment_rotation_book.save('Equipment Rotation.xlsx')
-        
