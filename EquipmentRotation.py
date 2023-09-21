@@ -132,65 +132,64 @@ def generate_bench_members(availability_spreadsheet):
     return bench_set
 
 
+def check_used(row, name, rotation_page):
+    for c in range(2, 14):
+        if rotation_page.cell(row=row, column=c).value == name:
+            return True
+    return False
+
+
 # Load Workbooks
 equipment_rotation_book = xl.load_workbook(filename="Equipment Rotation.xlsx")
+availability_book = xl.load_workbook(filename="Equipment Rotation Availability.xlsx")
 equipment_rotation_page = equipment_rotation_book["Sept 23"]
+availability_page = availability_book["Availability"]
 
-for row in range(2, 11):
+for row in range(2, 12):
     lion_used = False
     senior_used = False
     bench_set = generate_bench_members("Equipment Rotation Availability.xlsx")
     drum_set = generate_drum_members("Equipment Rotation Availability.xlsx")
-    box_set = generate_bench_members("Equipment Rotation Availability.xlsx")
+    box_set = generate_box_members("Equipment Rotation Availability.xlsx")
     lion_set = generate_lion_members("Equipment Rotation Availability.xlsx")
-    for col in range(10, 1, -1):
+
+    for col in range(13, 1, -1):
+        member = "^"
         if equipment_rotation_page.cell(row=row, column=col).value is not None:
             pass
-        if equipment_rotation_page.cell(row=1, column=col).value == "Benches":
+        elif equipment_rotation_page.cell(row=1, column=col).value == "Benches":
             member = random.choice(list(bench_set))
-            if lion_used:
-                while "Lion" in member:
-                    member = random.choice(list(bench_set))
-
-            if senior_used:
-                while "Senior" in member:
-                    member = random.choice(list(bench_set))
+            while check_used(row, member, equipment_rotation_page):
+                member = random.choice(list(bench_set))
         elif "Drum" in equipment_rotation_page.cell(row=1, column=col).value:
             member = random.choice(list(drum_set))
-            if lion_used:
-                while "Lion" in member:
-                    member = random.choice(list(drum_set))
-
-            if senior_used:
-                while "Senior" in member:
-                    member = random.choice(list(drum_set))
+            while check_used(row, member, equipment_rotation_page):
+                member = random.choice(list(drum_set))
         elif "Box" in equipment_rotation_page.cell(row=1, column=col).value:
             member = random.choice(list(box_set))
-            if lion_used:
-                while "Lion" in member:
-                    member = random.choice(list(box_set))
-
-            if senior_used:
-                while "Senior" in member:
-                    member = random.choice(list(box_set))
+            while check_used(row, member, equipment_rotation_page):
+                member = random.choice(list(box_set))
         else:
             member = random.choice(list(lion_set))
-            if lion_used:
-                while "Lion" in member:
-                    member = random.choice(list(lion_set))
-
-            if senior_used:
-                while "Senior" in member:
-                    member = random.choice(list(lion_set))
+            while check_used(row, member, equipment_rotation_page):
+                member = random.choice(list(lion_set))
 
         if "Lion" in member:
-            lion_used = True
-        elif "Senior" in member:
-            senior_used = True
-        lion_set.discard(member)
-        box_set.discard(member)
-        drum_set.discard(member)
-        bench_set.discard(member)
-        equipment_rotation_page.cell(row=row, column=col, value=member)
-        equipment_rotation_book.save('Equipment Rotation.xlsx')
+            for i in range(2, 23):
+                if "Lion" in availability_page.cell(row=i, column=1).value:
+                    bench_set.discard(member)
+                    drum_set.discard(member)
+                    box_set.discard(member)
+                    lion_set.discard(member)
 
+        if "Senior" in member:
+            for i in range(2, 23):
+                if "Senior" in availability_page.cell(row=i, column=1).value:
+                    bench_set.discard(member)
+                    drum_set.discard(member)
+                    box_set.discard(member)
+                    lion_set.discard(member)
+        if member != "^":
+            equipment_rotation_page.cell(row=row, column=col, value=member)
+        equipment_rotation_book.save('Equipment Rotation.xlsx')
+        
