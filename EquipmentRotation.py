@@ -143,7 +143,7 @@ helper_set = generate_helpers("Equipment Rotation Availability.xlsx")
 while equipment_rotation_page.cell(row=row, column=1).value is not None:
     for col in range(2, 15):
         if equipment_rotation_page.cell(row=row, column=col).value is not None:
-            pass
+            break
 
         member = "^"
         assigned_helper = False
