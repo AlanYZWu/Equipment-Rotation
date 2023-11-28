@@ -1,5 +1,6 @@
 import openpyxl as xl
 import random
+import math
 
 
 def text_to_boolean(text):
@@ -116,7 +117,7 @@ def check_used_helper(row, name, rotation_page):
 # Load Workbooks
 equipment_rotation_book = xl.load_workbook(filename="Equipment Rotation.xlsx")
 availability_book = xl.load_workbook(filename="Equipment Rotation Availability.xlsx")
-equipment_rotation_page = equipment_rotation_book["Nov 23"]
+equipment_rotation_page = equipment_rotation_book["Dec 23"]
 availability_page = availability_book["Availability"]
 
 # Dictionary of Use
@@ -134,6 +135,7 @@ while equipment_rotation_page.cell(row=row, column=1).value is not None:
 
     row = row + 1
 
+max_count = math.ceil((11 * (row - 2)) / (usage.__len__() - 1))
 row = 2
 drum_set = generate_drum_members("Equipment Rotation Availability.xlsx")
 box_set = generate_box_members("Equipment Rotation Availability.xlsx")
@@ -174,7 +176,7 @@ while equipment_rotation_page.cell(row=row, column=1).value is not None:
         if member != "^":
             equipment_rotation_page.cell(row=row, column=col, value=member)
             usage[member] = usage[member] + 1
-            if usage[member] > 4:
+            if usage[member] > max_count:
                 drum_set.discard(member)
                 box_set.discard(member)
                 lion_set.discard(member)
